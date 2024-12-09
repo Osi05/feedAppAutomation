@@ -19,71 +19,71 @@ import jakarta.annotation.PreDestroy;
 @Component
 public class DriverManager {
 
- final Logger logger = LoggerFactory.getLogger(this.getClass());
- 
- private WebDriver driver;
- 
- private boolean initialized;
- 
-    @Autowired
- ResourceProvider provider;
- 
-    private void createWebDriver() {
-                     
-     this.driver = switch( this.provider.getBrowser() ) {
-            case "chrome"  -> new ChromeDriver();
-         case "edge"    -> new EdgeDriver();
-         case "firefox" -> this.getFirefoxDriver();
-         default -> throw new IllegalArgumentException("Invalid browser: " + this.provider.getBrowser());
-     };
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-     this.initialized = true;
+	private WebDriver driver;
 
-     logger.debug("Selenium WebDriver Created! - {}", StringUtils.capitalize(this.provider.getBrowser()));   
-    }
- 
- private WebDriver getFirefoxDriver() {
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
-        Proxy proxy = new Proxy();
-        proxy.setAutodetect(false);
-        proxy.setNoProxy("no_proxy-var");
-        firefoxOptions.setCapability("proxy", proxy);
-        return new FirefoxDriver(firefoxOptions);
- }
+	private boolean initialized;
 
- public WebDriver getDriver() {
-     
-     if (!this.initialized) {
-         this.createWebDriver();
-     }
-     
-     return this.driver;
- }
+	@Autowired
+	ResourceProvider provider;
 
- /*
-  * Creates a new WebDriver 
-  */
- public WebDriver getDriver(boolean newDriver) {
-     
-     if (newDriver) {
-         this.closeDriver();
-     }
-     
-     return this.getDriver();
- }
+	private void createWebDriver() {
 
- public void closeDriver() {
- 
-     if (this.initialized) {
-         this.driver.quit();
-     }
-     
-     this.initialized = false;
- }
- 
-    @PreDestroy
-    public void preDestroy() {
-        this.closeDriver();
-    }
- 
+		this.driver = switch (this.provider.getBrowser()) {
+		case "chrome" -> new ChromeDriver();
+		case "edge" -> new EdgeDriver();
+		case "firefox" -> this.getFirefoxDriver();
+		default -> throw new IllegalArgumentException("Invalid browser: " + this.provider.getBrowser());
+		};
+
+		this.initialized = true;
+
+		logger.debug("Selenium WebDriver Created! - {}", StringUtils.capitalize(this.provider.getBrowser()));
+	}
+
+	private WebDriver getFirefoxDriver() {
+		FirefoxOptions firefoxOptions = new FirefoxOptions();
+		Proxy proxy = new Proxy();
+		proxy.setAutodetect(false);
+		proxy.setNoProxy("no_proxy-var");
+		firefoxOptions.setCapability("proxy", proxy);
+		return new FirefoxDriver(firefoxOptions);
+	}
+
+	public WebDriver getDriver() {
+
+		if (!this.initialized) {
+			this.createWebDriver();
+		}
+
+		return this.driver;
+	}
+
+	/*
+	 * Creates a new WebDriver
+	 */
+	public WebDriver getDriver(boolean newDriver) {
+
+		if (newDriver) {
+			this.closeDriver();
+		}
+
+		return this.getDriver();
+	}
+
+	public void closeDriver() {
+
+		if (this.initialized) {
+			this.driver.quit();
+		}
+
+		this.initialized = false;
+	}
+
+	@PreDestroy
+	public void preDestroy() {
+		this.closeDriver();
+	}
+
 }
