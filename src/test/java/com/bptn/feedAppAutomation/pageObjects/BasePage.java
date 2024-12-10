@@ -2,6 +2,8 @@ package com.bptn.feedAppAutomation.pageObjects;
 
 import java.time.Duration;
 
+import java.net.URI;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -38,4 +40,15 @@ public class BasePage {
 		return null;
 	}
 
+	public String getPageRoute() {
+		try {
+			Thread.sleep(2000);
+			return new URI(this.driverManager.getDriver().getCurrentUrl()).getPath();
+
+		} catch (Exception ex) {
+			this.logger.error(ex.getMessage(), ex);
+		}
+
+		return null;
+	}
 }
